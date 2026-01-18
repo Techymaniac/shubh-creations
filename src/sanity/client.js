@@ -6,7 +6,7 @@ export const client = createClient({
   projectId: "k9jhault", // <--- PASTE YOUR COPIED ID HERE
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: true,
+  useCdn: false,
 });
 
 const builder = imageUrlBuilder(client);
