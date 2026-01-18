@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// FIX: Using '../' to go UP one level to finding 'sanity' and 'context'
+// FIX: The double dots (../) are critical here
 import { client, urlFor } from "../sanity/client"; 
 import { useCart } from "../context/CartContext";
 
@@ -11,14 +11,14 @@ export default function Home() {
   const { cart } = useCart();
 
   useEffect(() => {
-    // Fetch only items where 'Is New Arrival' is turned ON
     const fetchProducts = async () => {
+      // Fetch new arrivals
+      const query = '*[_type == "product" && isNew == true]';
       try {
-        const query = '*[_type == "product" && isNew == true]';
         const data = await client.fetch(query);
         setProducts(data);
       } catch (err) {
-        console.error("Failed to load new arrivals", err);
+        console.error("Error loading products:", err);
       }
     };
     fetchProducts();
@@ -39,7 +39,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO SECTION - NO BUTTON */}
+      {/* Hero Section - NO BUTTON */}
       <section className="relative h-[80vh] w-full bg-[#f4f4f4] flex items-center justify-center">
         <div className="text-center z-10 px-4">
             <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">New Collection 2025</p>
@@ -47,9 +47,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Shop by Category */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic">Shop by Category</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* These links send "jewellery" (lowercase) to the URL */}
             {['Jewellery', 'Dresses', 'Bags'].map((cat) => (
                 <Link key={cat} href={`/${cat.toLowerCase()}`}>
                     <div className="h-64 bg-gray-50 flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all group">
@@ -60,12 +62,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
         <div className="flex justify-between items-end mb-10">
             <h3 className="text-3xl font-serif">New Season Arrivals</h3>
             <span className="text-sm text-gray-400">{products.length} Items</span>
         </div>
-        {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
             {products.map((product) => (
                 <div key={product._id} className="group cursor-pointer">
