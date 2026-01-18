@@ -7,22 +7,26 @@ import { useCart } from "../../context/CartContext";
 
 export default function CategoryPage({ params }) {
   const resolvedParams = use(params);
-  const categoryName = resolvedParams.category;
+  const categoryName = resolvedParams.category; // This is "jewellery" (from URL)
   
+  // --- FIX: Capitalize the first letter for Sanity ---
+  // This turns "jewellery" into "Jewellery" to match your admin panel
+  const dbCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1); 
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // Query: Get products that match the category AND are not 'Out of Stock'
-      const query = `*[_type == "product" && category == "${categoryName}" && isOutOfStock != true]`;
+      // Query: We use 'dbCategory' (Capitalized) here!
+      const query = `*[_type == "product" && category == "${dbCategory}" && isOutOfStock != true]`;
       const data = await client.fetch(query);
       setProducts(data);
       setLoading(false);
     };
     fetchProducts();
-  }, [categoryName]);
+  }, [dbCategory]);
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
@@ -48,7 +52,7 @@ export default function CategoryPage({ params }) {
           <div className="text-center py-20 text-gray-400">Loading collection...</div>
         ) : products.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-xl text-gray-400">No items found in this category.</h3>
+            <h3 className="text-xl text-gray-400">No items found in {dbCategory}.</h3>
             <Link href="/" className="text-black underline mt-4 block">Return Home</Link>
           </div>
         ) : (
@@ -56,7 +60,7 @@ export default function CategoryPage({ params }) {
             {products.map((item) => (
               <div key={item._id} className="bg-white rounded-lg overflow-hidden shadow-sm group hover:shadow-md transition-all">
                 
-                {/* Product Image - Click to go to Details */}
+                {/* Product Image */}
                 <Link href={`/product/${item._id}`}>
                   <div className="relative h-96 w-full cursor-pointer overflow-hidden bg-gray-100">
                     {item.image && (
@@ -77,10 +81,10 @@ export default function CategoryPage({ params }) {
                     <p className="font-bold text-gray-900 mt-1">₹{item.price}</p>
                     
                     <button 
-                        onClick={() => addToCart(item, item.category === 'dresses' ? "Select Size" : "One Size")}
+                        onClick={() => addToCart(item, item.category === 'Dresses' ? "Select Size" : "One Size")}
                         className="w-full mt-4 border border-black py-3 uppercase text-xs font-bold tracking-widest hover:bg-black hover:text-white transition-colors"
                     >
-                        {item.category === 'dresses' ? "Quick Add (Select Size)" : "Add to Bag"}
+                        {item.category === 'Dresses' ? "Quick Add (Select Size)" : "Add to Bag"}
                     </button>
                 </div>
               </div>
