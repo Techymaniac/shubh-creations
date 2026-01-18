@@ -1,15 +1,14 @@
-// src/sanity/client.js
 import { createClient } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url"; // FIX: Used specific import
 
 export const client = createClient({
-  projectId: "k9jhault", // <--- PASTE YOUR COPIED ID HERE
-  dataset: "production",
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
   apiVersion: "2024-01-01",
   useCdn: false,
 });
 
-const builder = imageUrlBuilder(client);
+const builder = createImageUrlBuilder(client);
 
 export function urlFor(source) {
   return builder.image(source);
