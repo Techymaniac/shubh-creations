@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { client, urlFor } from "./sanity/client";
-import { useCart } from "./context/CartContext";
+// FIX: Added '..' to go up one level to find the folders
+import { client, urlFor } from "../sanity/client";
+import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
