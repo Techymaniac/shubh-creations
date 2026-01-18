@@ -1,9 +1,9 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+// Using safer relative paths
 import { client, urlFor } from "../../sanity/client";
 import { useCart } from "../../context/CartContext";
 
@@ -15,74 +15,48 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (!params?.category) return;
-
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const rawCategory = decodeURIComponent(params.category);
         
-        // --- THE "WOMEN-DRESS-STORE" LOGIC ---
-        // We use the 'match' operator.
-        // This is much smarter than '=='. It finds "Jewellery" even if you search "jewellery".
-        // It acts like a search bar for your database.
+        // SMART MATCH: Finds "Jewellery" even if you search "jewellery"
         const query = `*[_type == "product" && category match "${rawCategory}*"]`;
-        
         const data = await client.fetch(query);
         setProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProducts();
-  }, [params?.category]);
+  }, [params]);
 
-  if (!params?.category) {
-    return <div className="p-20 text-center">Loading...</div>;
-  }
+  if (!params?.category) return <div className="p-20 text-center">Loading...</div>;
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
-      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm p-4 flex justify-between items-center">
         <Link href="/">
-          <h1 className="font-serif font-bold uppercase text-lg tracking-widest cursor-pointer">
-            Shubh Creations
-          </h1>
+           <h1 className="font-serif font-bold uppercase text-lg tracking-widest cursor-pointer">Shubh Creations</h1>
         </Link>
         <Link href="/cart">
-          <button className="bg-black text-white px-4 py-2 rounded-full text-sm hover:bg-gray-800 transition">
-            Bag ({cart.length})
-          </button>
+          <button className="bg-black text-white px-4 py-2 rounded-full text-sm">Bag ({cart.length})</button>
         </Link>
       </nav>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <Link href="/" className="text-sm text-gray-500 hover:text-black mb-6 inline-block">
-          ← Back to Home
-        </Link>
-
-        <h1 className="text-4xl font-serif capitalize mb-2">
-          {decodeURIComponent(params.category)}
-        </h1>
+        <h1 className="text-4xl font-serif capitalize mb-2">{decodeURIComponent(params.category)}</h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
         {loading ? (
-          <div className="text-center py-20 text-gray-400">Loading collection...</div>
+          <div className="text-center py-20 text-gray-400">Loading...</div>
         ) : products.length === 0 ? (
           <div className="text-center py-20">
             <h3 className="text-xl text-gray-400">No items found.</h3>
-            <p className="text-sm text-gray-400 mt-2">
-               We checked for "{params.category}" using smart match, but found nothing.
-               <br/>
-               (Check: Did you Publish the item in Sanity?)
-            </p>
-            <Link href="/" className="text-black underline mt-4 block">
-              Return Home
-            </Link>
+            <p className="text-sm text-gray-400 mt-2">Checking for "{params.category}"...</p>
+            <Link href="/" className="text-black underline mt-4 block">Return Home</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -103,12 +77,7 @@ export default function CategoryPage() {
                 <div className="p-4">
                   <h4 className="font-serif text-lg truncate">{item.name}</h4>
                   <p className="font-bold text-gray-900 mt-1">₹{item.price}</p>
-                  <button
-                    onClick={() => addToCart(item, "One Size")}
-                    className="w-full mt-4 border border-black py-3 uppercase text-xs font-bold tracking-widest hover:bg-black hover:text-white transition-colors"
-                  >
-                    Add to Bag
-                  </button>
+                  <button onClick={() => addToCart(item, "One Size")} className="w-full mt-4 border border-black py-3 uppercase text-xs font-bold tracking-widest hover:bg-black hover:text-white transition-colors">Add to Bag</button>
                 </div>
               </div>
             ))}
