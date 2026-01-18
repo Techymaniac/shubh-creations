@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    // Ignore linting errors during build to prevent Vercel failure
     ignoreDuringBuilds: true,
   },
   images: {
@@ -12,11 +11,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'plus.unsplash.com',
+        hostname: '**.unsplash.com', // <--- THE FIX: Allows ALL Unsplash domains
       },
     ],
   },

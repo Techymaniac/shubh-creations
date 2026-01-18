@@ -14,30 +14,22 @@ export default function CategoryPage() {
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
-    // 1. Wait for the URL parameters to be ready
     if (!params?.category) return;
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        
-        // 2. Decode the URL (e.g. "Jewellery" or "jewellery")
         const rawCategory = decodeURIComponent(params.category);
         
-        // 3. THE MASTER FIX:
-        // We tell Sanity: "Convert whatever is in the database to lowercase, 
-        // and compare it to our lowercase URL."
-        // This guarantees a match regardless of Capital Letters.
+        // Query: Convert database category to lowercase AND search term to lowercase
+        // This guarantees a match regardless of spelling (Jewellery vs jewellery)
         const query = `*[_type == "product" && lower(category) == "${rawCategory.toLowerCase()}"]`;
-        
-        console.log("Fetching with query:", query); // Debugging log
         
         const data = await client.fetch(query);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        // 4. Always stop loading, even if 0 items are found.
         setLoading(false);
       }
     };
@@ -45,20 +37,12 @@ export default function CategoryPage() {
     fetchProducts();
   }, [params?.category]);
 
-  // Loading State
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <p className="text-gray-400 tracking-widest uppercase text-sm animate-pulse">Loading Collection...</p>
-        </div>
-      </div>
-    );
+  if (!params?.category) {
+    return <div className="p-20 text-center">Loading...</div>;
   }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
-      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm p-4 flex justify-between items-center">
         <Link href="/">
           <h1 className="font-serif font-bold uppercase text-lg tracking-widest cursor-pointer">
@@ -78,15 +62,17 @@ export default function CategoryPage() {
         </Link>
 
         <h1 className="text-4xl font-serif capitalize mb-2">
-          {params?.category ? decodeURIComponent(params.category) : 'Collection'}
+          {decodeURIComponent(params.category)}
         </h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20 text-gray-400">Loading collection...</div>
+        ) : products.length === 0 ? (
           <div className="text-center py-20">
             <h3 className="text-xl text-gray-400">No items found.</h3>
             <p className="text-sm text-gray-400 mt-2">
-               We searched for "{params?.category}" but the database returned empty.
+               Checked for "{params.category}" (case-insensitive).
             </p>
             <Link href="/" className="text-black underline mt-4 block">
               Return Home
