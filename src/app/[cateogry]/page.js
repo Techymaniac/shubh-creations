@@ -1,32 +1,49 @@
 "use client";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react"; // Removed 'use' to be safe
 import Link from "next/link";
 import Image from "next/image";
 import { client, urlFor } from "../../sanity/client"; 
 import { useCart } from "../../context/CartContext";
 
 export default function CategoryPage({ params }) {
-  const resolvedParams = use(params);
-  const categoryName = resolvedParams.category; // This is "jewellery" (from URL)
-  
-  // --- FIX: Capitalize the first letter for Sanity ---
-  // This turns "jewellery" into "Jewellery" to match your admin panel
-  const dbCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1); 
-
+  const [categoryName, setCategoryName] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useCart();
 
+  // --- SAFE PARAMETER UNWRAPPING ---
   useEffect(() => {
+    // This handles both Next.js 14 and 15 safely
+    if (params instanceof Promise) {
+      params.then((p) => setCategoryName(p.category));
+    } else {
+      setCategoryName(params.category);
+    }
+  }, [params]);
+
+  // --- FETCH PRODUCTS ---
+  useEffect(() => {
+    if (!categoryName) return; // Stop if we don't have a category yet
+
     const fetchProducts = async () => {
-      // Query: We use 'dbCategory' (Capitalized) here!
+      // 1. Capitalize first letter (jewellery -> Jewellery)
+      const dbCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+      
+      // 2. Query Sanity
       const query = `*[_type == "product" && category == "${dbCategory}" && isOutOfStock != true]`;
       const data = await client.fetch(query);
+      
       setProducts(data);
       setLoading(false);
     };
+
     fetchProducts();
-  }, [dbCategory]);
+  }, [categoryName]);
+
+  // --- GUARD CLAUSE: Prevent Crash if loading ---
+  if (!categoryName) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
@@ -52,7 +69,10 @@ export default function CategoryPage({ params }) {
           <div className="text-center py-20 text-gray-400">Loading collection...</div>
         ) : products.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-xl text-gray-400">No items found in {dbCategory}.</h3>
+            {/* Display the capitalized name so you can debug the spelling if needed */}
+            <h3 className="text-xl text-gray-400">
+                No items found in {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}.
+            </h3>
             <Link href="/" className="text-black underline mt-4 block">Return Home</Link>
           </div>
         ) : (
