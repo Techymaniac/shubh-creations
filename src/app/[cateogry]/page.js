@@ -15,32 +15,42 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // 1. Safety Check: Wait for URL params
+      // Safety Check
       if (!params?.category) return;
 
       try {
         setLoading(true);
-        // 2. Format Category: "jewellery" -> "Jewellery"
-        const rawCategory = decodeURIComponent(params.category);
-        const dbCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+        const rawCategory = decodeURIComponent(params.category); // e.g., "jewellery"
         
-        console.log("Searching Sanity for:", dbCategory); // Debug log
+        // Create versions: "jewellery" AND "Jewellery"
+        const lowerCat = rawCategory.toLowerCase();
+        const capitalCat = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
 
-        // 3. Query Sanity
-        const query = `*[_type == "product" && category == "${dbCategory}"]`;
-        const data = await client.fetch(query);
+        console.log(`Searching for: ${lowerCat} OR ${capitalCat}`);
+
+        // FIX: Ask for BOTH versions so it matches no matter what
+        const query = `*[_type == "product" && (category == "${lowerCat}" || category == "${capitalCat}")]`;
         
+        const data = await client.fetch(query);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        // 4. ALWAYS turn off loading, even if 0 items found
-        setLoading(false);
+        setLoading(false); // Force loading off
       }
     };
 
     fetchProducts();
   }, [params]);
+
+  // Loading State
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-gray-400 tracking-widest uppercase text-sm animate-pulse">Loading Collection...</p>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
@@ -67,15 +77,11 @@ export default function CategoryPage() {
         </h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
-        {loading ? (
-          <div className="text-center py-20 text-gray-400">Loading...</div>
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-xl text-gray-400">No items found.</h3>
+            <h3 className="text-xl text-gray-400">No items found in this category.</h3>
             <p className="text-sm text-gray-400 mt-2">
-               Make sure the category in Sanity is exactly "
-               {params?.category && params.category.charAt(0).toUpperCase() + params.category.slice(1)}
-               "
+               (We searched for both "Jewellery" and "jewellery")
             </p>
             <Link href="/" className="text-black underline mt-4 block">
               Return Home

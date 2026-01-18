@@ -7,7 +7,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.sanity.io', // Allow Sanity Images
+        hostname: 'cdn.sanity.io', // Allow Sanity
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // Allow Unsplash (Fixed!)
       },
     ],
   },
