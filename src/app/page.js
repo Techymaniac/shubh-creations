@@ -2,17 +2,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// FIX: Using '..' to go up one level to the 'src' folder
+// Correct Import Path: Go UP one level to 'sanity' folder
 import { client, urlFor } from "../sanity/client"; 
 import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const { cart, addToCart } = useCart();
+  const { cart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // Fetch new arrivals
+      // Fetch products where 'Is New Arrival' is switched ON
       const query = '*[_type == "product" && isNew == true]';
       const data = await client.fetch(query);
       setProducts(data);
@@ -36,17 +36,11 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section (No Button) */}
       <section className="relative h-[80vh] w-full bg-[#f4f4f4] flex items-center justify-center">
         <div className="text-center z-10 px-4">
             <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">New Collection 2025</p>
-            <h2 className="text-5xl md:text-7xl font-serif mb-8 text-gray-900">Elegance is <br/> an Attitude.</h2>
-            
-            <Link href="/jewellery"> 
-                <button className="bg-black text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:scale-105">
-                    Shop Jewellery
-                </button>
-            </Link>
+            <h2 className="text-5xl md:text-7xl font-serif text-gray-900">Elegance is <br/> an Attitude.</h2>
         </div>
       </section>
 
@@ -95,18 +89,11 @@ export default function Home() {
                             </div>
                         </Link>
                         
-                        <div>
+                        <div className="mt-4">
                             <div className="flex justify-between items-start">
                                 <h4 className="font-serif text-lg text-gray-900 truncate pr-4">{product.name}</h4>
                                 <p className="text-sm font-bold">₹{product.price}</p>
                             </div>
-                            
-                            <button 
-                                onClick={() => addToCart(product, "One Size")}
-                                className="w-full mt-4 border border-black py-3 uppercase text-[10px] font-bold tracking-widest hover:bg-black hover:text-white transition-colors"
-                            >
-                                Add to Bag
-                            </button>
                         </div>
                     </div>
                 ))}
