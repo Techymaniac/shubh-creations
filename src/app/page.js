@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// Using the safest relative path
-import { client, urlFor } from "./sanity/client"; 
-import { useCart } from "./context/CartContext";
+// FIX: Using '../' to go UP one level to finding 'sanity' and 'context'
+import { client, urlFor } from "../sanity/client"; 
+import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
