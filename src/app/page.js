@@ -2,17 +2,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// FIX: Added '..' to go up one level to find the folders
-import { client, urlFor } from "../sanity/client";
-import { useCart } from "../context/CartContext";
+import { client, urlFor } from "./sanity/client"; // Notice: ./sanity/client (same folder level)
+import { useCart } from "./context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const { cart, addToCart } = useCart();
 
   useEffect(() => {
-    // Fetch only items where 'Is New Arrival' is turned ON
     const fetchProducts = async () => {
+      // Fetch new arrivals
       const query = '*[_type == "product" && isNew == true]';
       const data = await client.fetch(query);
       setProducts(data);
@@ -25,7 +24,9 @@ export default function Home() {
       {/* Navbar */}
       <nav className="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Shubh Creations</h1>
+            <Link href="/">
+              <h1 className="text-2xl font-serif font-bold tracking-widest uppercase cursor-pointer">Shubh Creations</h1>
+            </Link>
             <Link href="/cart">
               <button className="bg-black text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition">
                 Bag ({cart.length})
@@ -39,9 +40,11 @@ export default function Home() {
         <div className="text-center z-10 px-4">
             <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">New Collection 2025</p>
             <h2 className="text-5xl md:text-7xl font-serif mb-8 text-gray-900">Elegance is <br/> an Attitude.</h2>
-            <Link href="/dresses">
+            
+            {/* FIXED: Changed link from /dresses to /jewellery */}
+            <Link href="/jewellery"> 
                 <button className="bg-black text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:scale-105">
-                    Shop Latest
+                    Shop Jewellery
                 </button>
             </Link>
         </div>
@@ -51,7 +54,8 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic">Shop by Category</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['Dresses', 'Bags', 'Jewellery'].map((cat) => (
+            {/* Added 'jewellery' first */}
+            {['Jewellery', 'Dresses', 'Bags'].map((cat) => (
                 <Link key={cat} href={`/${cat.toLowerCase()}`}>
                     <div className="h-64 bg-gray-50 flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all group">
                         <span className="text-2xl font-serif group-hover:scale-110 transition duration-500">{cat}</span>
@@ -97,7 +101,6 @@ export default function Home() {
                                 <h4 className="font-serif text-lg text-gray-900 truncate pr-4">{product.name}</h4>
                                 <p className="text-sm font-bold">₹{product.price}</p>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1 capitalize">{product.category}</p>
                             
                             <button 
                                 onClick={() => addToCart(product, "One Size")}

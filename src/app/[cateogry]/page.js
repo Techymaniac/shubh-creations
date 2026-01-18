@@ -14,46 +14,43 @@ export default function CategoryPage() {
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      // Safety Check
-      if (!params?.category) return;
+    // Safety check: If params aren't ready, do nothing yet.
+    if (!params?.category) return;
 
+    const fetchProducts = async () => {
       try {
         setLoading(true);
-        const rawCategory = decodeURIComponent(params.category); // e.g., "jewellery"
+        const rawCategory = decodeURIComponent(params.category);
         
-        // Create versions: "jewellery" AND "Jewellery"
-        const lowerCat = rawCategory.toLowerCase();
-        const capitalCat = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+        // Prepare variations to ensure we match what's in Sanity
+        const lower = rawCategory.toLowerCase();
+        const capital = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+        const upper = rawCategory.toUpperCase();
 
-        console.log(`Searching for: ${lowerCat} OR ${capitalCat}`);
-
-        // FIX: Ask for BOTH versions so it matches no matter what
-        const query = `*[_type == "product" && (category == "${lowerCat}" || category == "${capitalCat}")]`;
+        // Search for ALL variations
+        const query = `*[_type == "product" && (category == "${lower}" || category == "${capital}" || category == "${upper}")]`;
         
         const data = await client.fetch(query);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        setLoading(false); // Force loading off
+        // CRITICAL FIX: This ensures loading stops even if 0 items are found
+        setLoading(false);
       }
     };
 
     fetchProducts();
   }, [params]);
 
-  // Loading State
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-400 tracking-widest uppercase text-sm animate-pulse">Loading Collection...</p>
-      </div>
-    );
+  // Small loading text while URL is being read
+  if (!params?.category) {
+    return <div className="p-20 text-center">Loading...</div>;
   }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm p-4 flex justify-between items-center">
         <Link href="/">
           <h1 className="font-serif font-bold uppercase text-lg tracking-widest cursor-pointer">
@@ -73,15 +70,17 @@ export default function CategoryPage() {
         </Link>
 
         <h1 className="text-4xl font-serif capitalize mb-2">
-          {params?.category ? decodeURIComponent(params.category) : 'Collection'}
+          {decodeURIComponent(params.category)}
         </h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20 text-gray-400">Loading collection...</div>
+        ) : products.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-xl text-gray-400">No items found in this category.</h3>
+            <h3 className="text-xl text-gray-400">No items found.</h3>
             <p className="text-sm text-gray-400 mt-2">
-               (We searched for both "Jewellery" and "jewellery")
+               We looked for "{decodeURIComponent(params.category)}" (and "{params.category.toLowerCase()}") but found nothing.
             </p>
             <Link href="/" className="text-black underline mt-4 block">
               Return Home

@@ -7,11 +7,15 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.sanity.io', // Allow Sanity
+        hostname: 'cdn.sanity.io',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // Allow Unsplash (Fixed!)
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com', // <--- This fixes the invisible images
       },
     ],
   },
