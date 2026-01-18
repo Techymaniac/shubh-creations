@@ -1,49 +1,40 @@
 "use client";
-import { useState, useEffect } from "react"; // Removed 'use' to be safe
+import { useState, useEffect, use } from "react"; // We use 'use' here
 import Link from "next/link";
 import Image from "next/image";
 import { client, urlFor } from "../../sanity/client"; 
 import { useCart } from "../../context/CartContext";
 
 export default function CategoryPage({ params }) {
-  const [categoryName, setCategoryName] = useState(null);
+  // 1. Unwrap the params safely using React's new 'use' hook
+  const resolvedParams = use(params);
+  const categoryName = resolvedParams?.category;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useCart();
 
-  // --- SAFE PARAMETER UNWRAPPING ---
-  useEffect(() => {
-    // This handles both Next.js 14 and 15 safely
-    if (params instanceof Promise) {
-      params.then((p) => setCategoryName(p.category));
-    } else {
-      setCategoryName(params.category);
-    }
-  }, [params]);
+  // 2. SAFETY GUARD: If categoryName is missing, stop here (Prevents crash & loading loop)
+  // This handles the split-second before the URL is ready
+  if (!categoryName) {
+    return <div className="text-center py-20">Loading...</div>;
+  }
 
-  // --- FETCH PRODUCTS ---
-  useEffect(() => {
-    if (!categoryName) return; // Stop if we don't have a category yet
+  // 3. Capitalize Logic (Only runs if categoryName exists)
+  // decodes URI component to handle spaces if any
+  const decodedCategory = decodeURIComponent(categoryName);
+  const dbCategory = decodedCategory.charAt(0).toUpperCase() + decodedCategory.slice(1);
 
+  useEffect(() => {
     const fetchProducts = async () => {
-      // 1. Capitalize first letter (jewellery -> Jewellery)
-      const dbCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
-      
-      // 2. Query Sanity
+      // Query Sanity with the Capitalized name
       const query = `*[_type == "product" && category == "${dbCategory}" && isOutOfStock != true]`;
       const data = await client.fetch(query);
-      
       setProducts(data);
       setLoading(false);
     };
-
     fetchProducts();
-  }, [categoryName]);
-
-  // --- GUARD CLAUSE: Prevent Crash if loading ---
-  if (!categoryName) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  }, [dbCategory]);
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
@@ -62,17 +53,16 @@ export default function CategoryPage({ params }) {
       <div className="max-w-7xl mx-auto px-6 py-10">
         <Link href="/" className="text-sm text-gray-500 hover:text-black mb-6 inline-block">← Back to Home</Link>
         
-        <h1 className="text-4xl font-serif capitalize mb-2">{categoryName}</h1>
+        {/* Display the capitalized name */}
+        <h1 className="text-4xl font-serif capitalize mb-2">{decodedCategory}</h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
         {loading ? (
           <div className="text-center py-20 text-gray-400">Loading collection...</div>
         ) : products.length === 0 ? (
           <div className="text-center py-20">
-            {/* Display the capitalized name so you can debug the spelling if needed */}
-            <h3 className="text-xl text-gray-400">
-                No items found in {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}.
-            </h3>
+            <h3 className="text-xl text-gray-400">No items found in {dbCategory}.</h3>
+            <p className="text-sm text-gray-400 mt-2">(Check if Sanity category is "{dbCategory}")</p>
             <Link href="/" className="text-black underline mt-4 block">Return Home</Link>
           </div>
         ) : (
