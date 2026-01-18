@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-// FIX: The double dots (../) are critical here
+// NOTICE: Removed next/image import
 import { client, urlFor } from "../sanity/client"; 
 import { useCart } from "../context/CartContext";
 
@@ -12,7 +11,6 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // Fetch new arrivals
       const query = '*[_type == "product" && isNew == true]';
       try {
         const data = await client.fetch(query);
@@ -39,7 +37,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section - NO BUTTON */}
+      {/* Hero Section */}
       <section className="relative h-[80vh] w-full bg-[#f4f4f4] flex items-center justify-center">
         <div className="text-center z-10 px-4">
             <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">New Collection 2025</p>
@@ -51,7 +49,6 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic">Shop by Category</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* These links send "jewellery" (lowercase) to the URL */}
             {['Jewellery', 'Dresses', 'Bags'].map((cat) => (
                 <Link key={cat} href={`/${cat.toLowerCase()}`}>
                     <div className="h-64 bg-gray-50 flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all group">
@@ -73,12 +70,12 @@ export default function Home() {
                 <div key={product._id} className="group cursor-pointer">
                     <Link href={`/product/${product._id}`}>
                         <div className="relative h-[400px] w-full overflow-hidden bg-gray-100 mb-4">
+                            {/* BYPASS: Standard HTML img tag */}
                             {product.image && (
-                                <Image 
+                                <img 
                                     src={urlFor(product.image).width(600).url()} 
                                     alt={product.name} 
-                                    fill 
-                                    className="object-cover transition duration-700 group-hover:scale-105" 
+                                    className="w-full h-full object-cover transition duration-700 group-hover:scale-105" 
                                 />
                             )}
                         </div>
