@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// Correct Import Path: Go UP one level to 'sanity' folder
 import { client, urlFor } from "../sanity/client"; 
 import { useCart } from "../context/CartContext";
 
@@ -12,7 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // Fetch products where 'Is New Arrival' is switched ON
+      // Fetch only items where 'Is New Arrival' is turned ON
       const query = '*[_type == "product" && isNew == true]';
       const data = await client.fetch(query);
       setProducts(data);
@@ -36,7 +35,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section (No Button) */}
+      {/* Hero Section - NO BUTTON */}
       <section className="relative h-[80vh] w-full bg-[#f4f4f4] flex items-center justify-center">
         <div className="text-center z-10 px-4">
             <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">New Collection 2025</p>

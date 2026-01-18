@@ -11,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.unsplash.com', // <--- THE FIX: Allows ALL Unsplash domains
+        hostname: '**.unsplash.com', // <--- Wildcard allows ALL Unsplash subdomains
       },
     ],
   },

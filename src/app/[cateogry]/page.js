@@ -14,15 +14,17 @@ export default function CategoryPage() {
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
+    // 1. Wait for URL params
     if (!params?.category) return;
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        // 2. Decode the URL (e.g., "jewellery")
         const rawCategory = decodeURIComponent(params.category);
         
-        // Query: Convert database category to lowercase AND search term to lowercase
-        // This guarantees a match regardless of spelling (Jewellery vs jewellery)
+        // 3. THE FIX: Search Sanity using lowercase conversion
+        // This finds "Jewellery", "jewellery", or "JEWELLERY" automatically.
         const query = `*[_type == "product" && lower(category) == "${rawCategory.toLowerCase()}"]`;
         
         const data = await client.fetch(query);
@@ -30,6 +32,7 @@ export default function CategoryPage() {
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
+        // 4. Force loading to stop (Fixes infinite load)
         setLoading(false);
       }
     };
