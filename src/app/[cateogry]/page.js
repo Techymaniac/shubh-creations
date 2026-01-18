@@ -1,40 +1,46 @@
 "use client";
-import { useState, useEffect, use } from "react"; // We use 'use' here
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation"; // <--- THE MAGIC FIX
 import Link from "next/link";
 import Image from "next/image";
 import { client, urlFor } from "../../sanity/client"; 
 import { useCart } from "../../context/CartContext";
 
-export default function CategoryPage({ params }) {
-  // 1. Unwrap the params safely using React's new 'use' hook
-  const resolvedParams = use(params);
-  const categoryName = resolvedParams?.category;
+export default function CategoryPage() {
+  // 1. Get the category directly from the URL (Instant, no waiting)
+  const params = useParams();
+  const rawCategory = params?.category; // e.g. "jewellery"
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useCart();
 
-  // 2. SAFETY GUARD: If categoryName is missing, stop here (Prevents crash & loading loop)
-  // This handles the split-second before the URL is ready
-  if (!categoryName) {
-    return <div className="text-center py-20">Loading...</div>;
-  }
-
-  // 3. Capitalize Logic (Only runs if categoryName exists)
-  // decodes URI component to handle spaces if any
-  const decodedCategory = decodeURIComponent(categoryName);
-  const dbCategory = decodedCategory.charAt(0).toUpperCase() + decodedCategory.slice(1);
+  // 2. Compute the Capitalized Category safely
+  // We use a small check to make sure 'rawCategory' exists first
+  const dbCategory = rawCategory 
+    ? rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1)
+    : "";
 
   useEffect(() => {
+    // Only run if we actually have a category name
+    if (!dbCategory) return;
+
     const fetchProducts = async () => {
-      // Query Sanity with the Capitalized name
+      setLoading(true);
+      // Query Sanity
       const query = `*[_type == "product" && category == "${dbCategory}" && isOutOfStock != true]`;
       const data = await client.fetch(query);
       setProducts(data);
       setLoading(false);
     };
+
     fetchProducts();
   }, [dbCategory]);
+
+  // 3. Safety Check: If URL is still reading, show loading
+  if (!rawCategory) {
+    return <div className="text-center py-20">Loading category...</div>;
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
@@ -53,8 +59,7 @@ export default function CategoryPage({ params }) {
       <div className="max-w-7xl mx-auto px-6 py-10">
         <Link href="/" className="text-sm text-gray-500 hover:text-black mb-6 inline-block">← Back to Home</Link>
         
-        {/* Display the capitalized name */}
-        <h1 className="text-4xl font-serif capitalize mb-2">{decodedCategory}</h1>
+        <h1 className="text-4xl font-serif capitalize mb-2">{decodeURIComponent(rawCategory)}</h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
         {loading ? (
