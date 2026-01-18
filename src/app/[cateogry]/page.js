@@ -14,25 +14,24 @@ export default function CategoryPage() {
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
-    // 1. Wait for URL params
     if (!params?.category) return;
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // 2. Decode the URL (e.g., "jewellery")
         const rawCategory = decodeURIComponent(params.category);
         
-        // 3. THE FIX: Search Sanity using lowercase conversion
-        // This finds "Jewellery", "jewellery", or "JEWELLERY" automatically.
-        const query = `*[_type == "product" && lower(category) == "${rawCategory.toLowerCase()}"]`;
+        // --- THE "WOMEN-DRESS-STORE" LOGIC ---
+        // We use the 'match' operator.
+        // This is much smarter than '=='. It finds "Jewellery" even if you search "jewellery".
+        // It acts like a search bar for your database.
+        const query = `*[_type == "product" && category match "${rawCategory}*"]`;
         
         const data = await client.fetch(query);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        // 4. Force loading to stop (Fixes infinite load)
         setLoading(false);
       }
     };
@@ -46,6 +45,7 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm p-4 flex justify-between items-center">
         <Link href="/">
           <h1 className="font-serif font-bold uppercase text-lg tracking-widest cursor-pointer">
@@ -59,6 +59,7 @@ export default function CategoryPage() {
         </Link>
       </nav>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-10">
         <Link href="/" className="text-sm text-gray-500 hover:text-black mb-6 inline-block">
           ← Back to Home
@@ -75,7 +76,9 @@ export default function CategoryPage() {
           <div className="text-center py-20">
             <h3 className="text-xl text-gray-400">No items found.</h3>
             <p className="text-sm text-gray-400 mt-2">
-               Checked for "{params.category}" (case-insensitive).
+               We checked for "{params.category}" using smart match, but found nothing.
+               <br/>
+               (Check: Did you Publish the item in Sanity?)
             </p>
             <Link href="/" className="text-black underline mt-4 block">
               Return Home

@@ -7,11 +7,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.sanity.io',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.unsplash.com', // <--- Wildcard allows ALL Unsplash subdomains
+        hostname: '**', // THIS ALLOWS EVERY DOMAIN (Sanity, Unsplash, Google, etc.)
       },
     ],
   },
