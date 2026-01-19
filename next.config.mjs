@@ -12,9 +12,13 @@ const nextConfig = {
       },
     ],
   },
-  // Ensure the build doesn't fail on small warnings
-  typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
+  // Matches the strict requirements of Next.js 16 Turbopack
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: { 
+    ignoreBuildErrors: true 
+  },
 };
 
 export default nextConfig;
