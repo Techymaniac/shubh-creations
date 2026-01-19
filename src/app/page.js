@@ -34,11 +34,25 @@ export default function Home() {
       {/* NAVBAR */}
       <nav className="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-          <Link href="/">
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase cursor-pointer text-black">
-              Shubh Creations
-            </h1>
-          </Link>
+          <Link
+  href="/"
+  className="group flex items-center gap-3 cursor-pointer"
+>
+  <img
+    src="/logo.png"
+    alt="Shubh Creations"
+    className="
+      h-10 w-10 md:h-12 md:w-12 object-contain
+      transition-all duration-300 ease-out
+      group-hover:scale-110
+      group-hover:drop-shadow-[0_0_12px_rgba(30,64,175,0.35)]
+      active:scale-95
+    "
+  />
+  <span className="sr-only">Shubh Creations</span>
+</Link>
+
+
           <Link href="/cart">
             <button className="bg-black text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition">
               Bag ({cart.length})
@@ -59,11 +73,15 @@ export default function Home() {
         <div className="absolute inset-0 bg-white/65"></div>
 
         <div className="relative text-center z-10 px-4">
-          <p className="text-sm font-bold tracking-[0.3em] text-gray-600 mb-4 uppercase">
-            New Collection 2025
-          </p>
+          <p className="text-sm font-bold tracking-[0.3em] text-gray-600 uppercase">
+  New Collection 2026
+</p>
+<p className="mt-2 text-xs tracking-widest text-gray-500 uppercase">
+  Managed by Jayshree Maru
+</p>
+
           <h2 className="text-5xl md:text-7xl font-serif text-gray-900">
-            Elegance is <br /> an Attitude.
+            Defining <br /> Elegance.
           </h2>
         </div>
       </section>
@@ -84,7 +102,7 @@ export default function Home() {
             {
               name: "Dresses",
               image:
-                "https://images.unsplash.com/photo-1520975922284-9f1e9f9e0b99?q=80&w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop",
             },
             {
               name: "Bags",
