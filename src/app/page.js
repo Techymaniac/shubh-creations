@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { client, urlFor } from "../sanity/client"; 
+import { client, urlFor } from "../sanity/client";
 import { useCart } from "../context/CartContext";
 
 export default function Home() {
@@ -47,10 +47,19 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="relative h-[80vh] w-full bg-[#f4f4f4] flex items-center justify-center">
-        <div className="text-center z-10 px-4">
-          <p className="text-sm font-bold tracking-[0.3em] text-gray-500 mb-4 uppercase">
+      {/* HERO SECTION WITH UNSPLASH IMAGE */}
+      <section
+        className="relative h-[80vh] w-full flex items-center justify-center bg-center bg-cover"
+        style={{
+          backgroundImage:
+            "url(https://images.unsplash.com/photo-1521334884684-d80222895322?q=80&w=1920&auto=format&fit=crop)",
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-white/65"></div>
+
+        <div className="relative text-center z-10 px-4">
+          <p className="text-sm font-bold tracking-[0.3em] text-gray-600 mb-4 uppercase">
             New Collection 2025
           </p>
           <h2 className="text-5xl md:text-7xl font-serif text-gray-900">
@@ -59,19 +68,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY */}
+      {/* SHOP BY CATEGORY WITH UNSPLASH IMAGES */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic text-black">
           Shop by Category
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {["Jewellery", "Dresses", "Bags"].map((cat) => (
-            <Link key={cat} href={`/${cat.toLowerCase()}`}>
-              <div className="h-64 bg-gray-50 flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all group">
-                {/* FIX: transform added */}
-                <span className="text-2xl font-serif text-black transform group-hover:scale-110 transition duration-500">
-                  {cat}
+          {[
+            {
+              name: "Jewellery",
+              image:
+                "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop",
+            },
+            {
+              name: "Dresses",
+              image:
+                "https://images.unsplash.com/photo-1520975922284-9f1e9f9e0b99?q=80&w=800&auto=format&fit=crop",
+            },
+            {
+              name: "Bags",
+              image:
+                "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
+            },
+          ].map((cat) => (
+            <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
+              <div
+                className="h-64 relative flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all bg-center bg-cover group"
+                style={{ backgroundImage: `url(${cat.image})` }}
+              >
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition"></div>
+
+                <span className="relative text-2xl font-serif text-black transform group-hover:scale-110 transition duration-500">
+                  {cat.name}
                 </span>
               </div>
             </Link>
