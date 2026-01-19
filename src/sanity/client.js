@@ -1,11 +1,11 @@
 import { createClient } from "next-sanity";
-import { createImageUrlBuilder } from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url"; // FIXED: Using named export
 
 export const client = createClient({
-  projectId: "k9jhault", // Your actual Project ID
+  projectId: "k9jhault",
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: true, // Re-enable CDN for faster loading
+  useCdn: true,
 });
 
 const builder = createImageUrlBuilder(client);
