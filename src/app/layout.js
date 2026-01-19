@@ -10,7 +10,7 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: "Shubh Creations",
-  description: "Elegance is an Attitude",
+  description: "Elegance is an Attitude $$",
 };
 
 export default function RootLayout({ children }) {
