@@ -11,7 +11,7 @@ export default function CartPage() {
   const totalAmount = cart.reduce((total, item) => total + item.price, 0);
 
   const handleCheckout = () => {
-    const phoneNumber = "919987107279"; // Your WhatsApp number (91 is India code)
+    const phoneNumber = "918369262534"; // Your WhatsApp number (91 is India code)
     
     // Create the message list
     let message = `*New Order Inquiry from Shubh Creations* 🛍️%0a%0a`;
