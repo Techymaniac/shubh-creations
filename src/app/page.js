@@ -8,18 +8,30 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const { cart } = useCart();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const query = '*[_type == "product" && isNew == true]';
-        const data = await client.fetch(query);
-        setProducts(data);
-      } catch (err) {
-        console.error("Failed to load new arrivals", err);
+  // src/app/page.js
+
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      // 1. Primary Query: Fetch items where 'isNew' is specifically checked in Sanity
+      const newArrivalsQuery = '*[_type == "product" && isNew == true]';
+      let data = await client.fetch(newArrivalsQuery);
+
+      // 2. Fallback: If no products are found with 'isNew == true', 
+      // fetch the 4 most recently added/updated products instead.
+      if (!data || data.length === 0) {
+        const fallbackQuery = '*[_type == "product"] | order(_createdAt desc)[0...4]';
+        data = await client.fetch(fallbackQuery);
       }
-    };
-    fetchProducts();
-  }, []);
+
+      setProducts(data);
+    } catch (err) {
+      console.error("Failed to load products:", err);
+    }
+  };
+
+  fetchProducts();
+}, []);
 
   return (
     <main className="bg-white min-h-screen">
