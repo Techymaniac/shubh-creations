@@ -1,5 +1,5 @@
 import { createClient } from "next-sanity";
-import { createImageUrlBuilder } from "@sanity/image-url"; // FIXED: Using named export
+import { createImageUrlBuilder } from "@sanity/image-url"; // FIXED: Uses named export
 
 export const client = createClient({
   projectId: "k9jhault",

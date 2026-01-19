@@ -2,19 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force light mode regardless of system settings */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
 }
 
-/* This specifically fixes the ghost text */
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: #000000 !important;
+  background: #ffffff !important;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Force headings to stay dark */
-h1, h2, h3, h4, h5, h6 {
-  color: #000000;
+/* Ensure all links and text are black */
+h1, h2, h3, h4, h5, h6, p, span, a {
+  color: #000000 !important;
 }
