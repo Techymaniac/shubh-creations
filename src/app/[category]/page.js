@@ -10,7 +10,7 @@ export default function CategoryPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { addToCart, cart } = useCart();
+  const { cart } = useCart();
 
   useEffect(() => {
     const fetchAndFilter = async () => {
@@ -18,12 +18,12 @@ export default function CategoryPage() {
         setLoading(true);
         setError(null);
 
-        // Fetch products using the hardcoded client
         const query = `*[_type == "product"]`;
         const data = await client.fetch(query);
 
-        if (params?.cateogry) {
-          const targetCategory = decodeURIComponent(params.cateogry).toLowerCase().trim();
+        // FIXED: Using correct spelling 'category' to match new folder name
+        if (params?.category) {
+          const targetCategory = decodeURIComponent(params.category).toLowerCase().trim();
           const matches = data.filter(item => {
              const itemCategory = item.category ? item.category.toLowerCase().trim() : "";
              return itemCategory === targetCategory || itemCategory.includes(targetCategory);
@@ -41,16 +41,18 @@ export default function CategoryPage() {
       }
     };
 
-    if (params?.cateogry) {
+    // FIXED: Parameter name match
+    if (params?.category) {
       fetchAndFilter();
     }
-  }, [params?.cateogry]);
+  }, [params?.category]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-        <p className="text-black font-bold">Loading {params?.cateogry}...</p>
+        {/* FIXED: Parameter name match */}
+        <p className="text-black font-bold">Loading {params?.category}...</p>
       </div>
     );
   }
@@ -67,7 +69,8 @@ export default function CategoryPage() {
       </nav>
 
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <h1 className="text-4xl font-serif capitalize mb-2 text-black">{decodeURIComponent(params.cateogry)}</h1>
+        {/* FIXED: Parameter name match */}
+        <h1 className="text-4xl font-serif capitalize mb-2 text-black">{decodeURIComponent(params.category)}</h1>
         <p className="text-gray-500 mb-10">{products.length} Items Available</p>
 
         {products.length === 0 ? (
