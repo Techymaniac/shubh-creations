@@ -8,18 +8,18 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* NUCLEAR OPTION: Force everything to be black and visible */
 body {
-  color: black;
-  background: white;
-  /* This forces the text to be visible */
+  color: black !important;
+  background-color: white !important;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Force headings to be black */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p, span, div, a, li {
   color: black !important;
 }
 
-p, span, div {
-  color: inherit;
+/* Exception for buttons so they can be white text on black background */
+button {
+  color: white !important;
 }
