@@ -1,9 +1,9 @@
 import { createClient } from "next-sanity";
-import { createImageUrlBuilder } from "@sanity/image-url";
+import createImageUrlBuilder from "@sanity/image-url";
 
 export const client = createClient({
-  projectId: "k9jhault", // Hardcoded to ensure build passes
-  dataset: "production", // Hardcoded to ensure build passes
+  projectId: "k9jhault",
+  dataset: "production",
   apiVersion: "2024-01-01",
   useCdn: false,
 });
