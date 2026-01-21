@@ -71,7 +71,8 @@ export default function ProductPage({ params }) {
               muted
               playsInline
               preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain bg-black
+"
               onError={() => setVideoFailed(true)}
             />
           ) : (
@@ -80,7 +81,8 @@ export default function ProductPage({ params }) {
                 src={urlFor(product.image).url()}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-contain bg-black
+"
               />
             )
           )}

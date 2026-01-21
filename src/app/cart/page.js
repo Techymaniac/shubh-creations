@@ -57,7 +57,9 @@ export default function CartPage() {
                       muted
                       playsInline
                       preload="metadata"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover
+
+"
                       onError={() =>
                         setFailedVideos((p) => ({
                           ...p,
@@ -71,7 +73,9 @@ export default function CartPage() {
                         src={urlFor(item.image).url()}
                         alt={item.name}
                         fill
-                        className="object-cover"
+                        className="object-cover
+
+"
                       />
                     )
                   )}

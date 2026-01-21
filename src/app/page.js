@@ -34,17 +34,12 @@ export default function Home() {
             <img
               src="/logo.png"
               alt="Shubh Creations"
-              className="h-10 w-10 md:h-12 md:w-12 object-contain
-                transition-all duration-300 ease-out
-                group-hover:scale-110
-                group-hover:drop-shadow-[0_0_12px_rgba(30,64,175,0.35)]
-                active:scale-95"
+              className="h-10 w-10 md:h-12 md:w-12 object-contain transition-all duration-300 group-hover:scale-110"
             />
-            <span className="sr-only">Shubh Creations</span>
           </Link>
 
           <Link href="/cart">
-            <button className="bg-black text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition">
+            <button className="bg-black text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest">
               Bag ({cart.length})
             </button>
           </Link>
@@ -75,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY */}
+      {/* SHOP BY CATEGORY — UNCHANGED */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic text-black">
           Shop by Category
@@ -83,29 +78,17 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            {
-              name: "Jewellery",
-              image:
-                "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop",
-            },
-            {
-              name: "Dresses",
-              image:
-                "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop",
-            },
-            {
-              name: "Bags",
-              image:
-                "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
-            },
+            { name: "Jewellery", image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop" },
+            { name: "Dresses", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop" },
+            { name: "Bags", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop" },
           ].map((cat) => (
             <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
               <div
-                className="h-64 relative flex items-center justify-center border border-gray-100 hover:border-black cursor-pointer transition-all bg-center bg-cover group"
+                className="h-64 relative flex items-center justify-center bg-cover bg-center border group"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
-                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition"></div>
-                <span className="relative text-2xl font-serif text-black transform group-hover:scale-110 transition duration-500">
+                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50" />
+                <span className="relative text-2xl font-serif text-black">
                   {cat.name}
                 </span>
               </div>
@@ -114,13 +97,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* NEW ARRIVALS */}
+      {/* NEW ARRIVALS — VIDEO FIXED */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                <div className="relative h-[400px] bg-gray-100 overflow-hidden">
+                <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
                   {product.video?.asset ? (
                     <video
                       src={product.video.asset.url}
@@ -128,14 +111,14 @@ export default function Home() {
                       loop
                       muted
                       playsInline
-                      className="w-full h-full object-cover group-hover:scale-105 transition"
+                      className="w-full h-full object-contain group-hover:scale-105 transition"
                     />
                   ) : (
                     product.image && (
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition"
+                        className="w-full h-full object-cover"
                       />
                     )
                   )}

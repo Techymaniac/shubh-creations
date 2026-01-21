@@ -96,7 +96,8 @@ export default function CategoryPage() {
                         muted
                         playsInline
                         preload="metadata"
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-contain bg-black
+ group-hover:scale-105 transition duration-500"
                         onError={(e) => (e.currentTarget.style.display = "none")}
                       />
                     ) : (
@@ -104,7 +105,8 @@ export default function CategoryPage() {
                         <img
                           src={urlFor(item.image).width(600).url()}
                           alt={item.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          className="w-full h-full object-contain bg-black
+ group-hover:scale-105 transition duration-500"
                         />
                       )
                     )}
