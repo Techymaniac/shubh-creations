@@ -109,9 +109,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* NEW ARRIVALS — FIXED */}
+      {/* NEW ARRIVALS */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        {/* 🔥 RESTORED HEADING */}
         <div className="flex justify-between items-end mb-10">
           <h3 className="text-3xl font-serif text-black">
             New Arrivals
@@ -126,7 +125,7 @@ export default function Home() {
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
                 {/* MEDIA */}
-                <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
+                <div className="relative h-[400px] bg-black overflow-hidden">
                   {product.video?.asset ? (
                     <video
                       src={product.video.asset.url}
@@ -134,15 +133,22 @@ export default function Home() {
                       loop
                       muted
                       playsInline
-                      preload="metadata"
-                      className="w-full h-full object-contain transform group-hover:scale-105 transition duration-500"
+                      preload="auto"
+                      poster={
+                        product.image
+                          ? urlFor(product.image).width(600).url()
+                          : undefined
+                      }
+                      className="absolute inset-0 w-full h-full object-contain bg-black
+                                 transform group-hover:scale-105 transition duration-500"
                     />
                   ) : (
                     product.image && (
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover
+                                   transform group-hover:scale-105 transition duration-500"
                       />
                     )
                   )}
