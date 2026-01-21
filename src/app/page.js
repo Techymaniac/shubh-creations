@@ -78,17 +78,29 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { name: "Jewellery", image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop" },
-            { name: "Dresses", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop" },
-            { name: "Bags", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop" },
+            {
+              name: "Jewellery",
+              image:
+                "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop",
+            },
+            {
+              name: "Dresses",
+              image:
+                "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop",
+            },
+            {
+              name: "Bags",
+              image:
+                "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
+            },
           ].map((cat) => (
             <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
               <div
-                className="h-64 relative flex items-center justify-center bg-cover bg-center border group"
+                className="h-64 relative flex items-center justify-center bg-cover bg-center border group overflow-hidden"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
-                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50" />
-                <span className="relative text-2xl font-serif text-black">
+                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition" />
+                <span className="relative text-2xl font-serif text-black transform group-hover:scale-110 transition duration-500">
                   {cat.name}
                 </span>
               </div>
@@ -97,12 +109,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* NEW ARRIVALS — VIDEO FIXED */}
+      {/* NEW ARRIVALS — FIXED */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
+        {/* 🔥 RESTORED HEADING */}
+        <div className="flex justify-between items-end mb-10">
+          <h3 className="text-3xl font-serif text-black">
+            New Arrivals
+          </h3>
+          <span className="text-sm text-gray-400">
+            {products.length} Items
+          </span>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
+                {/* MEDIA */}
                 <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
                   {product.video?.asset ? (
                     <video
@@ -111,19 +134,21 @@ export default function Home() {
                       loop
                       muted
                       playsInline
-                      className="w-full h-full object-contain group-hover:scale-105 transition"
+                      preload="metadata"
+                      className="w-full h-full object-contain transform group-hover:scale-105 transition duration-500"
                     />
                   ) : (
                     product.image && (
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
                       />
                     )
                   )}
                 </div>
 
+                {/* TEXT */}
                 <h4 className="mt-4 font-serif text-lg text-black">
                   {product.name}
                 </h4>
