@@ -1,129 +1,127 @@
 "use client";
-import { useState, useEffect, use } from "react";
-import Image from "next/image";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { client, urlFor } from "../../sanity/client";
 import { useCart } from "../../context/CartContext";
 
+/* CATEGORY HERO IMAGES */
+const CATEGORY_IMAGES = {
+  jewellery:
+    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1600&auto=format&fit=crop",
+  dresses:
+    "https://images.unsplash.com/photo-1520975922284-9f1e9f9e0b99?q=80&w=1600&auto=format&fit=crop",
+  bags:
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1600&auto=format&fit=crop",
+};
 
-export default function ProductPage({ params }) {
-  const resolvedParams = use(params);
-  const productId = resolvedParams.id;
+export default function CategoryPage() {
+  const params = useParams();
+  const normalizedCategory = params?.category?.toLowerCase();
 
-  const [product, setProduct] = useState(null);
+  const heroImage = CATEGORY_IMAGES[normalizedCategory];
+
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState("");
-
-  const { addToCart, cart } = useCart();
+  const { cart } = useCart();
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      const query = `*[_type == "product" && _id == "${productId}"][0]`;
-      const data = await client.fetch(query);
-      setProduct(data);
-      setLoading(false);
+    if (!normalizedCategory) return;
+
+    const fetchProducts = async () => {
+      try {
+        const data = await client.fetch(
+          '*[_type == "product" && category == $cat]',
+          { cat: normalizedCategory }
+        );
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to load category products:", err);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchProduct();
-  }, [productId]);
 
-  if (loading)
-    return <div className="text-center py-20 text-black">Loading details...</div>;
-  if (!product)
-    return <div className="text-center py-20 text-black">Product not found</div>;
+    fetchProducts();
+  }, [normalizedCategory]);
 
-  const hasSizes = product.category === "dresses";
-
-  const handleAddToCart = () => {
-    if (hasSizes && !selectedSize) {
-      alert("Please select a size first!");
-      return;
-    }
-    const finalSize = hasSizes ? selectedSize : "One Size";
-    addToCart(product, finalSize);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-black">
+        Loading {params?.category}...
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pb-20">
       {/* NAVBAR */}
-      <nav className="p-4 flex justify-between items-center sticky top-0 bg-white z-50 border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 p-4 flex justify-between items-center">
         <Link href="/">
-          <h1 className="text-xl font-serif font-bold uppercase tracking-widest text-black">
+          <h1 className="font-serif font-bold uppercase tracking-widest text-black">
             Shubh Creations
           </h1>
         </Link>
         <Link href="/cart">
-          <button className="bg-black text-white px-5 py-2 rounded-full text-sm">
+          <button className="bg-black text-white px-4 py-2 rounded-full text-sm">
             Bag ({cart.length})
           </button>
         </Link>
       </nav>
 
-      <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-12 mt-4">
-        {/* PRODUCT MEDIA */}
-        <div className="relative h-[500px] md:h-[600px] bg-gray-100 rounded-lg overflow-hidden">
-          {product.video?.asset ? (
-            <video
-              src={product.video.asset.url}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            product.image && (
-              <Image
-                src={urlFor(product.image).url()}
-                alt={product.name}
-                fill
-                className="object-cover"
-              />
-            )
-          )}
-        </div>
-
-        {/* PRODUCT DETAILS */}
-        <div className="flex flex-col justify-center">
-          <p className="uppercase tracking-widest text-sm text-gray-400 mb-2">
-            {product.category}
-          </p>
-          <h1 className="text-4xl md:text-5xl font-serif mb-6 text-black leading-tight">
-            {product.name}
+      {/* CATEGORY HERO */}
+      {heroImage && (
+        <section
+          className="relative h-[45vh] bg-cover bg-center flex items-center justify-center"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        >
+          <div className="absolute inset-0 bg-white/65"></div>
+          <h1 className="relative text-5xl font-serif capitalize text-black">
+            {params?.category}
           </h1>
-          <p className="text-3xl font-medium text-black mb-8">
-            ₹{product.price}
-          </p>
+        </section>
+      )}
 
-          {hasSizes && (
-            <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-black mb-3">
-                Select Size
-              </h3>
-              <div className="flex gap-3">
-                {["S", "M", "L", "XL"].map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-14 h-14 border flex items-center justify-center transition-all text-sm font-medium ${
-                      selectedSize === size
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border-gray-200"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+      {/* PRODUCT GRID */}
+      <div className="max-w-7xl mx-auto px-6 py-14">
+        {products.length === 0 ? (
+          <div className="text-center py-20">
+            <h3 className="text-2xl font-serif text-gray-400 mb-2">
+              No items found
+            </h3>
+            <p className="text-sm text-gray-500">
+              0 items available in this category
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {products.map((item) => (
+              <div key={item._id} className="group">
+                <Link href={`/product/${item._id}`}>
+                  <div className="relative h-96 w-full overflow-hidden bg-gray-100">
+                    {item.image && (
+                      <img
+                        src={urlFor(item.image).width(600).url()}
+                        alt={item.name}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                      />
+                    )}
+                  </div>
+                </Link>
+
+                <div className="mt-4">
+                  <h4 className="font-serif text-lg text-black">
+                    {item.name}
+                  </h4>
+                  <p className="font-bold text-black mt-1">
+                    ₹{item.price}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-
-          <button
-            onClick={handleAddToCart}
-            className="w-full bg-black text-white py-5 uppercase tracking-widest font-bold text-sm hover:bg-gray-800 transition-all"
-          >
-            Add to Bag
-          </button>
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
