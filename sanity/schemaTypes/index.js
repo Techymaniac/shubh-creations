@@ -31,8 +31,19 @@ const product = {
       name: 'image',
       title: 'Product Image',
       type: 'image',
-      options: { hotspot: true }, // Allows you to crop images on your phone
+      options: { hotspot: true },
     },
+    // --- NEW FIELD FOR MP4 "GIFS" ---
+    {
+      name: 'animation',
+      title: 'Animation (MP4 Format)',
+      description: 'Upload a short .mp4 video here to act as a GIF',
+      type: 'file',
+      options: {
+        accept: 'video/mp4'
+      }
+    },
+    // --------------------------------
     {
       name: 'isNew',
       title: 'Is New Arrival?',

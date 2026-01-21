@@ -25,7 +25,13 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const fetchAndFilter = async () => {
-      const data = await client.fetch('*[_type == "product"]');
+      // UPDATED QUERY: Fetches existing data + the new videoUrl
+      const query = `*[_type == "product"]{
+        ...,
+        "videoUrl": animation.asset->url
+      }`;
+      
+      const data = await client.fetch(query);
 
       const matches = data.filter((item) => {
         const itemCategory = item.category
@@ -90,13 +96,29 @@ export default function CategoryPage() {
               <div key={item._id} className="group">
                 <Link href={`/product/${item._id}`}>
                   <div className="relative h-96 w-full overflow-hidden bg-gray-100">
-                    {item.image && (
-                      <img
-                        src={urlFor(item.image).width(600).url()}
-                        alt={item.name}
+                    {/* --- HYBRID PLAYER LOGIC --- */}
+                    {item.videoUrl ? (
+                      // If video exists: Play it, but use image as poster
+                      <video
+                        src={item.videoUrl}
+                        poster={item.image ? urlFor(item.image).width(600).url() : ""}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
                         className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
                       />
+                    ) : (
+                      // Fallback: Just show image
+                      item.image && (
+                        <img
+                          src={urlFor(item.image).width(600).url()}
+                          alt={item.name}
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        />
+                      )
                     )}
+                    {/* --------------------------- */}
                   </div>
                 </Link>
 
