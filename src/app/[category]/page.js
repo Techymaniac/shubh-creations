@@ -2,8 +2,9 @@
 import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { client, urlFor } from "../../../sanity/client";
-import { useCart } from "../../../context/CartContext";
+import { client, urlFor } from "../../sanity/client";
+import { useCart } from "../../context/CartContext";
+
 
 export default function ProductPage({ params }) {
   const resolvedParams = use(params);
