@@ -6,7 +6,6 @@ import Link from "next/link";
 import { client, urlFor } from "../../sanity/client";
 import { useCart } from "../../context/CartContext";
 
-/* CATEGORY HERO IMAGES */
 const CATEGORY_IMAGES = {
   jewellery:
     "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1600&auto=format&fit=crop",
@@ -19,7 +18,6 @@ const CATEGORY_IMAGES = {
 export default function CategoryPage() {
   const params = useParams();
   const normalizedCategory = params?.category?.toLowerCase();
-
   const heroImage = CATEGORY_IMAGES[normalizedCategory];
 
   const [products, setProducts] = useState([]);
@@ -30,17 +28,12 @@ export default function CategoryPage() {
     if (!normalizedCategory) return;
 
     const fetchProducts = async () => {
-      try {
-        const data = await client.fetch(
-          '*[_type == "product" && category == $cat]',
-          { cat: normalizedCategory }
-        );
-        setProducts(data);
-      } catch (err) {
-        console.error("Failed to load category products:", err);
-      } finally {
-        setLoading(false);
-      }
+      const data = await client.fetch(
+        '*[_type == "product" && category == $cat]{ ..., "videoUrl": video.asset->url }',
+        { cat: normalizedCategory }
+      );
+      setProducts(data);
+      setLoading(false);
     };
 
     fetchProducts();
@@ -49,7 +42,7 @@ export default function CategoryPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-black">
-        Loading {params?.category}...
+        Loading {params.category}...
       </div>
     );
   }
@@ -58,10 +51,8 @@ export default function CategoryPage() {
     <main className="min-h-screen bg-white pb-20">
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 p-4 flex justify-between items-center">
-        <Link href="/">
-          <h1 className="font-serif font-bold uppercase tracking-widest text-black">
-            Shubh Creations
-          </h1>
+        <Link href="/" className="font-serif font-bold uppercase tracking-widest text-black">
+          Shubh Creations
         </Link>
         <Link href="/cart">
           <button className="bg-black text-white px-4 py-2 rounded-full text-sm">
@@ -70,7 +61,7 @@ export default function CategoryPage() {
         </Link>
       </nav>
 
-      {/* CATEGORY HERO */}
+      {/* HERO */}
       {heroImage && (
         <section
           className="relative h-[45vh] bg-cover bg-center flex items-center justify-center"
@@ -78,12 +69,12 @@ export default function CategoryPage() {
         >
           <div className="absolute inset-0 bg-white/65"></div>
           <h1 className="relative text-5xl font-serif capitalize text-black">
-            {params?.category}
+            {params.category}
           </h1>
         </section>
       )}
 
-      {/* PRODUCT GRID */}
+      {/* GRID */}
       <div className="max-w-7xl mx-auto px-6 py-14">
         {products.length === 0 ? (
           <div className="text-center py-20">
@@ -100,12 +91,25 @@ export default function CategoryPage() {
               <div key={item._id} className="group">
                 <Link href={`/product/${item._id}`}>
                   <div className="relative h-96 w-full overflow-hidden bg-gray-100">
-                    {item.image && (
-                      <img
-                        src={urlFor(item.image).width(600).url()}
-                        alt={item.name}
+                    {item.videoUrl ? (
+                      <video
+                        src={item.videoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
                         className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        onError={(e) => (e.currentTarget.style.display = "none")}
                       />
+                    ) : (
+                      item.image && (
+                        <img
+                          src={urlFor(item.image).width(600).url()}
+                          alt={item.name}
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        />
+                      )
                     )}
                   </div>
                 </Link>
