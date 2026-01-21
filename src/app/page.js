@@ -70,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY — UNCHANGED */}
+      {/* SHOP BY CATEGORY */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic text-black">
           Shop by Category
@@ -111,20 +111,15 @@ export default function Home() {
 
       {/* NEW ARRIVALS */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <div className="flex justify-between items-end mb-10">
-          <h3 className="text-3xl font-serif text-black">
-            New Arrivals
-          </h3>
-          <span className="text-sm text-gray-400">
-            {products.length} Items
-          </span>
-        </div>
+        <h3 className="text-3xl font-serif text-black mb-10">
+          New Arrivals
+        </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                {/* MEDIA */}
+                {/* MEDIA CONTAINER */}
                 <div className="relative h-[400px] bg-black overflow-hidden">
                   {product.video?.asset ? (
                     <video
@@ -147,14 +142,12 @@ export default function Home() {
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="w-full h-full object-cover
-                                   transform group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
                       />
                     )
                   )}
                 </div>
 
-                {/* TEXT */}
                 <h4 className="mt-4 font-serif text-lg text-black">
                   {product.name}
                 </h4>
