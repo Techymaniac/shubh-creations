@@ -49,7 +49,6 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen bg-white pb-20">
-      {/* NAVBAR */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 p-4 flex justify-between items-center">
         <Link href="/" className="font-serif font-bold uppercase tracking-widest text-black">
           Shubh Creations
@@ -61,7 +60,6 @@ export default function CategoryPage() {
         </Link>
       </nav>
 
-      {/* HERO */}
       {heroImage && (
         <section
           className="relative h-[45vh] bg-cover bg-center flex items-center justify-center"
@@ -74,7 +72,6 @@ export default function CategoryPage() {
         </section>
       )}
 
-      {/* GRID */}
       <div className="max-w-7xl mx-auto px-6 py-14">
         {products.length === 0 ? (
           <div className="text-center py-20">
@@ -99,7 +96,7 @@ export default function CategoryPage() {
                         muted
                         playsInline
                         preload="metadata"
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                         onError={(e) => (e.currentTarget.style.display = "none")}
                       />
                     ) : (
@@ -107,7 +104,7 @@ export default function CategoryPage() {
                         <img
                           src={urlFor(item.image).width(600).url()}
                           alt={item.name}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                         />
                       )
                     )}
