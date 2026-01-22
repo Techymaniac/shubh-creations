@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { client, urlFor } from "../sanity/client";
@@ -11,9 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
 
-  useEffect(() => {
     const fetchProducts = async () => {
       const query = '*[_type == "product" && isNew == true]';
       let data = await client.fetch(query);
@@ -101,7 +100,7 @@ export default function Home() {
           ].map((cat) => (
             <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
               <div
-                className="h-64 relative flex items-center justify-center bg-cover bg-center border group overflow-hidden"
+                className="h-64 relative flex items-center justify-center bg-cover bg-center border border-gray-100 cursor-pointer group overflow-hidden"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
                 <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition" />
@@ -116,7 +115,7 @@ export default function Home() {
 
       {/* NEW ARRIVALS */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h3 className="text-3xl font-serif text-black mb-10">
+        <h3 className="text-3xl font-serif mb-10 text-black">
           New Arrivals
         </h3>
 
@@ -124,16 +123,26 @@ export default function Home() {
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                <div className="relative h-[400px] w-full overflow-hidden bg-gray-100">
-                  {mounted && product.video?.asset ? (
-                    <video
-                      src={product.video.asset.url}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
-                    />
+                <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
+                  {product.video?.asset ? (
+                    mounted ? (
+                      <video
+                        src={product.video.asset.url}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-contain transform group-hover:scale-105 transition duration-500"
+                      />
+                    ) : product.image ? (
+                      <img
+                        src={urlFor(product.image).width(600).url()}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-black" />
+                    )
                   ) : (
                     product.image && (
                       <img
