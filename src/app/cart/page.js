@@ -30,7 +30,7 @@ ${messageLines.join("\n")}
 Total Amount: ₹${totalAmount}
     `.trim();
 
-    const whatsappUrl = `https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(
+    const whatsappUrl = `https://wa.me/918369262534?text=${encodeURIComponent(
       message
     )}`;
 
