@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { client, urlFor } from "../sanity/client";
@@ -10,13 +11,29 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const query = '*[_type == "product" && isNew == true]';
+      // 🔴 IMPORTANT FIX: explicitly resolve video URL
+      const query = `
+        *[_type == "product" && isNew == true]{
+          _id,
+          name,
+          price,
+          image,
+          "videoUrl": video.asset->url
+        }
+      `;
+
       let data = await client.fetch(query);
 
       if (!data || data.length === 0) {
-        data = await client.fetch(
-          '*[_type == "product"] | order(_createdAt desc)[0...4]'
-        );
+        data = await client.fetch(`
+          *[_type == "product"] | order(_createdAt desc)[0...4]{
+            _id,
+            name,
+            price,
+            image,
+            "videoUrl": video.asset->url
+          }
+        `);
       }
 
       setProducts(data);
@@ -70,7 +87,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY (UNCHANGED) */}
+      {/* SHOP BY CATEGORY */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic text-black">
           Shop by Category
@@ -96,10 +113,10 @@ export default function Home() {
           ].map((cat) => (
             <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
               <div
-                className="h-64 relative flex items-center justify-center bg-cover bg-center border border-gray-100 hover:border-black group cursor-pointer"
+                className="h-64 relative flex items-center justify-center bg-cover bg-center border border-gray-100 group overflow-hidden"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
-                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition" />
+                <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition"></div>
                 <span className="relative text-2xl font-serif text-black transform group-hover:scale-110 transition duration-500">
                   {cat.name}
                 </span>
@@ -111,7 +128,7 @@ export default function Home() {
 
       {/* NEW ARRIVALS */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h3 className="text-3xl font-serif mb-10 text-black">
+        <h3 className="text-3xl font-serif text-black mb-10">
           New Arrivals
         </h3>
 
@@ -119,28 +136,23 @@ export default function Home() {
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                <div className="relative h-[400px] bg-black overflow-hidden rounded-lg">
-                  {product.video?.asset?.url ? (
+                <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
+                  {product.videoUrl ? (
                     <video
-                      src={product.video.asset.url}
+                      src={product.videoUrl}
                       autoPlay
                       loop
                       muted
                       playsInline
                       preload="metadata"
-                      poster={
-                        product.image
-                          ? urlFor(product.image).width(600).url()
-                          : undefined
-                      }
-                      className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     product.image && (
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     )
                   )}
