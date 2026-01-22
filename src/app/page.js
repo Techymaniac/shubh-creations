@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { client, urlFor } from "../sanity/client";
@@ -7,12 +6,9 @@ import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const [mounted, setMounted] = useState(false);
   const { cart } = useCart();
 
   useEffect(() => {
-    setMounted(true);
-
     const fetchProducts = async () => {
       const query = '*[_type == "product" && isNew == true]';
       let data = await client.fetch(query);
@@ -74,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY CATEGORY */}
+      {/* SHOP BY CATEGORY (UNCHANGED) */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h3 className="text-xl font-serif mb-10 text-center italic text-black">
           Shop by Category
@@ -100,7 +96,7 @@ export default function Home() {
           ].map((cat) => (
             <Link key={cat.name} href={`/${cat.name.toLowerCase()}`}>
               <div
-                className="h-64 relative flex items-center justify-center bg-cover bg-center border border-gray-100 cursor-pointer group overflow-hidden"
+                className="h-64 relative flex items-center justify-center bg-cover bg-center border border-gray-100 hover:border-black group cursor-pointer"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
                 <div className="absolute inset-0 bg-white/70 group-hover:bg-white/50 transition" />
@@ -123,32 +119,28 @@ export default function Home() {
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                <div className="relative h-[400px] bg-black overflow-hidden flex items-center justify-center">
-                  {product.video?.asset ? (
-                    mounted ? (
-                      <video
-                        src={product.video.asset.url}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-contain transform group-hover:scale-105 transition duration-500"
-                      />
-                    ) : product.image ? (
-                      <img
-                        src={urlFor(product.image).width(600).url()}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-black" />
-                    )
+                <div className="relative h-[400px] bg-black overflow-hidden rounded-lg">
+                  {product.video?.asset?.url ? (
+                    <video
+                      src={product.video.asset.url}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      poster={
+                        product.image
+                          ? urlFor(product.image).width(600).url()
+                          : undefined
+                      }
+                      className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    />
                   ) : (
                     product.image && (
                       <img
                         src={urlFor(product.image).width(600).url()}
                         alt={product.name}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     )
                   )}
@@ -157,9 +149,7 @@ export default function Home() {
                 <h4 className="mt-4 font-serif text-lg text-black">
                   {product.name}
                 </h4>
-                <p className="font-bold text-black">
-                  ₹{product.price}
-                </p>
+                <p className="font-bold text-black">₹{product.price}</p>
               </div>
             </Link>
           ))}
