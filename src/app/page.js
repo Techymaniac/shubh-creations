@@ -6,7 +6,12 @@ import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [mounted, setMounted] = useState(false);
   const { cart } = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -120,7 +125,7 @@ export default function Home() {
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
                 <div className="relative h-[400px] w-full overflow-hidden bg-gray-100">
-                  {product.video?.asset ? (
+                  {mounted && product.video?.asset ? (
                     <video
                       src={product.video.asset.url}
                       autoPlay
