@@ -119,8 +119,7 @@ export default function Home() {
           {products.map((product) => (
             <Link key={product._id} href={`/product/${product._id}`}>
               <div className="group cursor-pointer">
-                {/* MEDIA CONTAINER */}
-                <div className="relative h-[400px] bg-black overflow-hidden">
+                <div className="relative h-[400px] w-full overflow-hidden bg-gray-100">
                   {product.video?.asset ? (
                     <video
                       src={product.video.asset.url}
@@ -128,14 +127,7 @@ export default function Home() {
                       loop
                       muted
                       playsInline
-                      preload="auto"
-                      poster={
-                        product.image
-                          ? urlFor(product.image).width(600).url()
-                          : undefined
-                      }
-                      className="absolute inset-0 w-full h-full object-contain bg-black
-                                 transform group-hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
                     />
                   ) : (
                     product.image && (
@@ -151,7 +143,9 @@ export default function Home() {
                 <h4 className="mt-4 font-serif text-lg text-black">
                   {product.name}
                 </h4>
-                <p className="font-bold text-black">₹{product.price}</p>
+                <p className="font-bold text-black">
+                  ₹{product.price}
+                </p>
               </div>
             </Link>
           ))}
